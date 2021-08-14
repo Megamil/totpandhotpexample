@@ -1,0 +1,222 @@
+{
+	"info": {
+		"_postman_id": "939151e2-605c-497a-9a48-850f4cb7c51d",
+		"name": "TOTP",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create Secret",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const response = pm.response.json();",
+							"pm.environment.set(\"secret\", response.secret);",
+							"",
+							"pm.test(\"Secret Generated\", function() {",
+							"    pm.expect(response.secret).not.eq(\"\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "localhost:3000/otp-secret",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"otp-secret"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Code 6 numbers (TOTP)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const response = pm.response.json();",
+							"pm.environment.set(\"token\", response.token);",
+							"",
+							"pm.test(\"Token Generated\", function() {",
+							"    pm.expect(response.token).not.eq(\"\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"secret\" : \"{{secret}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/totp-code",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"totp-code"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Validate (TOTP)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const response = pm.response.json();",
+							"",
+							"pm.test(\"Token and Secret Valid\", function() {",
+							"    pm.expect(response.valid).is.true;",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"secret\" : \"{{secret}}\",\n    \"token\": \"{{token}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/totp-validate",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"totp-validate"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Code 6 numbers (HOTP)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const response = pm.response.json();",
+							"pm.environment.set(\"token\", response.token);",
+							"",
+							"pm.test(\"Token Generated\", function() {",
+							"    pm.expect(response.token).not.eq(\"\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.environment.set(\"counter\", parseInt(pm.environment.get(\"counter\")) + 1);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"secret\" : \"{{secret}}\",\n    \"counter\" : {{counter}}\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/hotp-code",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"hotp-code"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Validate (HOTP)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const response = pm.response.json();",
+							"",
+							"pm.test(\"Token and Secret Valid\", function() {",
+							"    pm.expect(response.valid).is.true;",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"secret\" : \"{{secret}}\",\n    \"token\": \"{{token}}\",\n    \"counter\" : {{counter}}\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/hotp-validate",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"hotp-validate"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
